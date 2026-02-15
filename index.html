@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARK SHOP</title>
+<style>
+body{
+    margin:0;
+    font-family:Arial;
+    background:#0f0f0f;
+    color:white;
+}
+header{
+    background:#1c1c1c;
+    padding:15px;
+    text-align:center;
+    font-size:24px;
+    font-weight:bold;
+}
+nav{
+    background:#111;
+    padding:10px;
+    text-align:center;
+}
+nav button{
+    margin:5px;
+    padding:8px 12px;
+    background:#00cc99;
+    border:none;
+    color:white;
+    cursor:pointer;
+}
+.container{
+    padding:20px;
+}
+.card{
+    background:#1e1e1e;
+    padding:15px;
+    margin:10px 0;
+    border-radius:8px;
+}
+input{
+    padding:8px;
+    width:100%;
+    margin:5px 0;
+}
+button.buy{
+    background:#ff6600;
+}
+.admin{
+    background:#330000;
+    padding:10px;
+    margin-top:20px;
+}
+</style>
+</head>
+<body>
+
+<header>🦖 ARK SHOP</header>
+
+<nav>
+<button onclick="showPage('home')">Trang chủ</button>
+<button onclick="showPage('login')">Đăng nhập</button>
+<button onclick="showPage('register')">Đăng ký</button>
+<button onclick="showPage('shop')">Cửa hàng</button>
+<button onclick="showPage('deposit')">Nạp tiền</button>
+<button onclick="showPage('admin')">Admin</button>
+</nav>
+
+<div class="container">
+
+<div id="home">
+<h2>Chào mừng đến ARK SHOP</h2>
+<p>Shop bán vật phẩm game ARK uy tín - giá rẻ - tự động.</p>
+</div>
+
+<div id="login" style="display:none">
+<h2>Đăng nhập</h2>
+<input id="loginUser" placeholder="Tài khoản">
+<input id="loginPass" type="password" placeholder="Mật khẩu">
+<button onclick="login()">Đăng nhập</button>
+</div>
+
+<div id="register" style="display:none">
+<h2>Đăng ký</h2>
+<input id="regUser" placeholder="Tài khoản">
+<input id="regPass" type="password" placeholder="Mật khẩu">
+<button onclick="register()">Đăng ký</button>
+</div>
+
+<div id="shop" style="display:none">
+<h2>Cửa hàng</h2>
+
+<div class="card">
+<h3>Khủng long Rex</h3>
+<p>50.000 VNĐ</p>
+<button class="buy" onclick="buy(50000)">Mua</button>
+</div>
+
+<div class="card">
+<h3>Súng Tek</h3>
+<p>30.000 VNĐ</p>
+<button class="buy" onclick="buy(30000)">Mua</button>
+</div>
+
+<div class="card">
+<h3>Gói VIP Kim Cương</h3>
+<p>100.000 VNĐ</p>
+<button class="buy" onclick="buy(100000)">Mua</button>
+</div>
+
+</div>
+
+<div id="deposit" style="display:none">
+<h2>Nạp tiền (VietQR Demo)</h2>
+<input id="money" type="number" placeholder="Nhập số tiền">
+<button onclick="generateQR()">Tạo QR</button>
+<br><br>
+<img id="qr" width="250">
+</div>
+
+<div id="admin" style="display:none">
+<h2>Trang Admin</h2>
+<div class="admin" id="adminData"></div>
+</div>
+
+</div>
+
+<script>
+let currentUser = localStorage.getItem("user");
+let balance = parseInt(localStorage.getItem("balance")) || 0;
+
+function showPage(id){
+    document.querySelectorAll(".container > div").forEach(div=>div.style.display="none");
+    document.getElementById(id).style.display="block";
+}
+
+function register(){
+    let u = document.getElementById("regUser").value;
+    let p = document.getElementById("regPass").value;
+    localStorage.setItem("user",u);
+    localStorage.setItem("pass",p);
+    localStorage.setItem("balance",0);
+    alert("Đăng ký thành công");
+}
+
+function login(){
+    let u = document.getElementById("loginUser").value;
+    let p = document.getElementById("loginPass").value;
+    if(u===localStorage.getItem("user") && p===localStorage.getItem("pass")){
+        alert("Đăng nhập thành công");
+    }else{
+        alert("Sai tài khoản");
+    }
+}
+
+function buy(price){
+    balance = parseInt(localStorage.getItem("balance")) || 0;
+    if(balance >= price){
+        balance -= price;
+        localStorage.setItem("balance",balance);
+        alert("Mua thành công");
+    }else{
+        alert("Không đủ tiền");
+    }
+}
+
+function generateQR(){
+    let amount = document.getElementById("money").value;
+    let username = localStorage.getItem("user") || "guest";
+    let qr = `https://img.vietqr.io/image/MB-0123456789-compact2.png?amount=${amount}&addInfo=nap-${username}`;
+    document.getElementById("qr").src = qr;
+
+    balance += parseInt(amount);
+    localStorage.setItem("balance",balance);
+}
+
+function loadAdmin(){
+    document.getElementById("adminData").innerHTML =
+        "User: "+localStorage.getItem("user")+
+        "<br>Số dư: "+localStorage.getItem("balance")+" VNĐ";
+}
+loadAdmin();
+</script>
+
+</body>
+</html>
